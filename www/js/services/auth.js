@@ -1,28 +1,17 @@
 'use strict';
 
-app.factory('Auth', function($state, facebookService){
+app.factory('Auth', function($state, $firebaseObject){
   var auth = firebase.auth();
-  var user = firebase.auth().currentUser;
+  var ref = firebase.database().ref();
   var FbToken;
   var Auth = {
-    createProfile: function(uid, FbToken){
-      var profile = {
-        name: user.displayName,
-        gender: facebookService.getUserData(FbToken).gender,
-        email: user.email,
-        avatar: user.photoUrl,
-        birthday: facebookService.getUserData(FbToken).birthday,
-        location: facebookService.getUserData(FbToken).location.name
-      }
-      console.log(profile);
-      console.log(facebookService.getUserData(FbToken).birthday);
+    createProfile: function(uid, profile){
       return firebase.database().ref('/profiles/'+uid).set(profile);
+
     },
     getProfile: function(uid){
-      return firebase.database().ref('/profiles/'+uid).once('value').then(snapshot){
-        return snapshot.val();
-      }
-    }
+      return firebase.database().ref('/profiles/'+uid).once('value');
+    },
     login: function(){
       var provider = new firebase.auth.FacebookAuthProvider();
       provider.addScope('public_profile, email, user_location, user_birthday, user_photos, user_about_me');
@@ -30,8 +19,19 @@ app.factory('Auth', function($state, facebookService){
         // This gives you a Facebook Access Token. You can use it to access the Facebook API.
         FbToken = result.credential.accessToken;
         // The signed-in user info.
-        var user = Auth.getProfile(result.uid)
-        // ...
+        console.log(result.user);
+        Auth.getProfile(result.user.uid).then(function(profile){
+          if(profile.name == undefined){
+            console.log('profile name undefined');
+            var info = result.user.providerData[0];
+            var profile = {
+              name: info.displayName,
+              email: info.email,
+              avatar: info.photoURL
+            }
+            Auth.createProfile(result.user.uid, profile);
+          }
+        });
       }).catch(function(error) {
         // Handle Errors here.
         var errorCode = error.code;
@@ -65,4 +65,65 @@ app.factory('Auth', function($state, facebookService){
 
 
   return Auth;
-})
+});
+
+
+// 'use strict';
+//
+// app.factory('Auth', function($firebaseAuth, $firebaseObject, $state) {
+//     var ref = firebase.database().ref();
+//     var auth = $firebaseAuth();
+//
+//     var Auth = {
+//
+//         createProfile: function(uid, profile) {
+//             return ref.child('profiles').child(uid).set(profile);
+//         },
+//
+//         getProfile: function(uid) {
+//             return $firebaseObject(ref.child('profiles').child(uid));
+//         },
+//
+//         login: function() {
+//             var provider = new firebase.auth.FacebookAuthProvider();
+//             provider.addScope('public_profile, email, user_location, user_birthday, user_photos, user_about_me');
+//
+//             return auth.$signInWithPopup(provider)
+//
+//                 .then(function(result) {
+//                     var accessToken = result.credential.accessToken;
+//                     var user = Auth.getProfile(result.user.uid).$loaded();
+//
+//                     user.then(function(profile) {
+//                         if (profile.name == undefined) {
+//
+//                             var info = result.user.providerData[0];
+//                             var profile = {
+//                                 name: info.displayName,
+//                                 email: info.email,
+//                                 avatar: info.photoURL,
+//                             }
+//                             Auth.createProfile(result.user.uid, profile);
+//                         }
+//                     });
+//                 });
+//         },
+//
+//         logout: function() {
+//             return auth.$signOut();
+//         }
+//
+//     };
+//
+//     auth.$onAuthStateChanged(function(authData) {
+//         if(authData) {
+//             console.log('Logged in!');
+//         } else {
+//             $state.go('login');
+//             console.log('You need to login.');
+//         }
+//     });
+//
+//     return Auth;
+//
+// });
