@@ -1,9 +1,8 @@
 'use strict';
 
-app.factory('Auth', function($state, $firebaseObject){
+app.factory('Auth', function($state, $firebaseAuth, $q, $http, $rootScope){
   var auth = firebase.auth();
   var ref = firebase.database().ref();
-  var FbToken;
   var Auth = {
     createProfile: function(uid, profile){
       return firebase.database().ref('/profiles/'+uid).set(profile);
@@ -17,19 +16,32 @@ app.factory('Auth', function($state, $firebaseObject){
       provider.addScope('public_profile, email, user_location, user_birthday, user_photos, user_about_me');
       return auth.signInWithPopup(provider).then(function(result){
         // This gives you a Facebook Access Token. You can use it to access the Facebook API.
-        FbToken = result.credential.accessToken;
+        var accessToken = result.credential.accessToken;
         // The signed-in user info.
         console.log(result.user);
         Auth.getProfile(result.user.uid).then(function(profile){
           if(profile.name == undefined){
-            console.log('profile name undefined');
-            var info = result.user.providerData[0];
-            var profile = {
-              name: info.displayName,
-              email: info.email,
-              avatar: info.photoURL
-            }
-            Auth.createProfile(result.user.uid, profile);
+            var genderPromise = $http.get('https://graph.facebook.com/me?fields=gender&access_token=' + accessToken);
+            var birthdayPromise = $http.get('https://graph.facebook.com/me?fields=birthday&access_token=' + accessToken);
+            var locationPromise = $http.get('https://graph.facebook.com/me?fields=location&access_token=' + accessToken);
+            var bioPromise = $http.get('https://graph.facebook.com/me?fields=about&access_token=' + accessToken);
+            var imagesPromise = $http.get('https://graph.facebook.com/me/photos/uploaded?fields=source&access_token=' + accessToken);
+            var promises = [genderPromise, birthdayPromise, locationPromise, bioPromise, imagesPromise];
+            $q.all(promises).then(function(data){
+              var info = result.user.providerData[0];
+              var profile = {
+                name: info.displayName,
+                email: info.email,
+                avatar: info.photoURL,
+                gender: data[0].data.gender ? data[0].data.gender : "",
+                 birthday: data[1].data.birthday ? data[1].data.birthday : "",
+                 age: data[1].data.birthday ? Auth.getAge(data[1].data.birthday) : "",
+                 location: data[2].data.location ?  data[2].data.location.name : "",
+                 bio: data[3].data.about ? data[3].data.about : "",
+                 images: data[4].data.data
+              }
+              Auth.createProfile(result.user.uid, profile);
+            });
           }
         });
       }).catch(function(error) {
@@ -49,15 +61,24 @@ app.factory('Auth', function($state, $firebaseObject){
       }, function(error) {
         // An error happened.
       });
+    },
+    getAge: function(birthday) {
+      return new Date().getFullYear() - new Date(birthday).getFullYear();
+    },
+
+    requireAuth: function() {
+      return auth.currentUser;
     }
   };
 
   auth.onAuthStateChanged(function(user) {
     if (user) {
       // User is signed in.
+      $rootScope.signedInUser = user;
       console.log('logged in!');
     } else {
       // No user is signed in.
+      $rootScope.signedInUser = null;
       $state.go('login');
       console.log('You need to login!');
     }

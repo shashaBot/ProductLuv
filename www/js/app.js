@@ -25,7 +25,7 @@ var app = angular.module('starter', ['ionic', 'firebase'])
 .config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
 
-    .state('app', {
+  .state('app', {
     url: '/app',
     abstract: true,
     templateUrl: 'templates/menu.html'
@@ -41,7 +41,21 @@ var app = angular.module('starter', ['ionic', 'firebase'])
     url: '/profile',
     views: {
       'menuContent': {
-        templateUrl: 'templates/profile.html'
+        templateUrl: 'templates/profile.html',
+        controller: 'ProfileCtrl as prof',
+        resolve: {
+          profile: function(Auth, $state, $rootScope) {
+            if($rootScope.signedInUser){
+              Auth.getProfile($rootScope.signedInUser.uid).then(function(snapshot){
+                console.log(snapshot.val());
+                return snapshot.val();
+              });
+            }
+            else{
+              $state.go('login');
+            }
+          }
+        }
       }
     }
   })
@@ -53,11 +67,19 @@ var app = angular.module('starter', ['ionic', 'firebase'])
       }
     }
   })
+
   .state('app.settings', {
     url: '/settings',
     views: {
       'menuContent': {
-        templateUrl: 'templates/settings.html'
+        templateUrl: 'templates/settings.html',
+        resolve:{
+          auth: function ($state, $rootScope){
+            if($rootScope.signedInUser === null){
+              $state.go('login');
+            }
+          }
+        }
       }
     }
   });
