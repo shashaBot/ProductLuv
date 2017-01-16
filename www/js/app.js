@@ -73,6 +73,7 @@ var app = angular.module('starter', ['ionic', 'firebase'])
     views: {
       'menuContent': {
         templateUrl: 'templates/settings.html',
+        controller: 'SettingCtrl as sett',
         resolve:{
           auth: function ($state, $rootScope){
             if($rootScope.signedInUser === null){
