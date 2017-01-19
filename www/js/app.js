@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-var app = angular.module('starter', ['ionic', 'firebase'])
+var app = angular.module('starter', ['ionic', 'firebase', 'ionic.contrib.ui.tinderCards'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -65,8 +65,22 @@ var app = angular.module('starter', ['ionic', 'firebase'])
     views: {
       'menuContent': {
         templateUrl: 'templates/home.html',
-        controller: 'HomeCtrl as home'
+        controller: 'HomeCtrl as home',
+        resolve: {
+          auth: function($state, Auth) {
+            return Auth.requireAuth().catch(function() {
+              $state.go('login');
+            });
+          },
+          uid: function(Auth){
+            return Auth.requireAuth()
+              .then(function(auth){
+                return auth.uid;
+              });
+          }
+        }
       }
+
     }
   })
 
