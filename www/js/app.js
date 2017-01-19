@@ -44,21 +44,22 @@ var app = angular.module('starter', ['ionic', 'firebase'])
         templateUrl: 'templates/profile.html',
         controller: 'ProfileCtrl as prof',
         resolve: {
-          profile: function(Auth, $state, $rootScope) {
-            if($rootScope.signedInUser){
-              Auth.getProfile($rootScope.signedInUser.uid).then(function(snapshot){
-                console.log(snapshot.val());
-                return snapshot.val();
-              });
-            }
-            else{
+          auth: function($state, Auth) {
+            return Auth.requireAuth().catch(function() {
               $state.go('login');
-            }
+            });
+          },
+
+          profile: function(Auth) {
+            return Auth.requireAuth().then(function(auth) {
+              return Auth.getProfile(auth.uid).$loaded();
+            });
           }
         }
       }
     }
   })
+
   .state('app.home', {
     url: '/home',
     views: {
@@ -75,17 +76,16 @@ var app = angular.module('starter', ['ionic', 'firebase'])
       'menuContent': {
         templateUrl: 'templates/settings.html',
         controller: 'SettingCtrl as sett',
-        resolve:{
-          auth: function ($state, $rootScope){
-            if($rootScope.signedInUser === null){
+        resolve: {
+          auth: function($state, Auth) {
+            return Auth.requireAuth().catch(function() {
               $state.go('login');
-            }
+            });
           }
         }
       }
     }
   });
-
 
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/login');
