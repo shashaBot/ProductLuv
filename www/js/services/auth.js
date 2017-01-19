@@ -68,6 +68,13 @@ app.factory('Auth', function($state, $firebaseAuth, $q, $http, $rootScope){
 
     requireAuth: function() {
       return auth.currentUser;
+    },
+
+    getProfiles: function(){
+      ref.child('profiles').on('value', function(data){
+        console.log(data.val());
+        return data.val();
+      });
     }
   };
 
