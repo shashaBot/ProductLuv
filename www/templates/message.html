@@ -1,0 +1,40 @@
+<ion-modal-view cache-view="false" view-title="Messages">
+    <ion-header-bar class="bar-positive">
+        <h1 class="title">Messages to {{matc.currentMatchUser.name}}</h1>
+        <div class="buttons">
+            <button class="button button-icon icon ion-close" ng-click="matc.closeMessageModal()"></button>
+        </div>
+    </ion-header-bar>
+
+  <ion-content has-bouncing="true" class="has-header has-footer" delegate-handle="userMessageScroll">
+  <div ng-repeat="message in matc.messages">
+    <div ng-if="message.uid === matc.currentMatchUser.$id">
+      <div class="message message-left">
+        <img ng-src="{{matc.currentMatchUser.avatar}}"/>
+        <div>
+          <span ng-bind-html="message.body"></span>
+          <br/>
+          {{message.timestamp | date:'short' }}
+        </div>
+      </div>
+    </div>
+    <div ng-if="message.uid === matc.currentUser.$id">
+      <div class="message message-right">
+        <div>
+          <span ng-bind-html="message.body"></span>
+          <br/>
+          {{message.timestamp | date:'short' }}
+        </div>
+        <img ng-src="{{matc.currentUser.avatar}}"/>
+      </div>
+    </div>
+  </div>
+  </ion-content>
+
+  <form name="sendMessageForm" ng-submit="matc.sendMessage()" novalidate>
+    <ion-footer-bar class="bar-stable item-input-inset message-footer" keyboard-attach>
+      <input ng-model="matc.message" class="item-input" value="" placeholder="Send a message..." required minlength="1" maxlength="1500" msd-elastic/>
+      <button class="button button-icon icon ion-android-send" type="submit" ng-disabled="!matc.message || matc.message === ''"></button>
+    </ion-footer-bar>
+  </form>
+</ion-modal-view>
