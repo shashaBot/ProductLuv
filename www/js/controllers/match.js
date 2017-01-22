@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('MatchCtrl', function(Match, Like, Auth, uid, profile, $scope, $ionicModal, $ionicScrollDelegate, $timeout){
+app.controller('MatchCtrl', function(Match, Like, Auth, uid, Messages, profile, $scope, $ionicModal, $ionicScrollDelegate, $timeout){
   var matc = this;
   matc.currentUser = profile;
   matc.message = '';
