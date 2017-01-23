@@ -7,9 +7,13 @@ app.controller('AuthCtrl', function(Auth, $state) {
 	auth.login = function() {
 		console.log('Login clicked');
 
-		Auth.login().then(function(user) {
+		Auth.login().then(
+		  function(user) {
 			$state.go('app.home');
-		});
+		},
+    function(data) {
+		    console.log(data);
+    });
 
 	};
 
