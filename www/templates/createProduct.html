@@ -1,0 +1,44 @@
+<ion-modal-view>
+  <ion-header-bar>
+    <h1 class="title">Create Product</h1>
+    <div class="buttons">
+      <button class="button button-clear button-dark" ng-click="prof.closeCreateProdModal()">
+        Close
+      </button>
+    </div>
+  </ion-header-bar>
+      <ion-content>
+        <div class="list">
+          <label class="item item-input">
+            <span class="input-label">Product Name</span>
+            <input type="text" ng-model="prof.product.name">
+          </label>
+        </div>
+        <div class="list padding">
+          <h2>Select Product category</h2>
+           <ion-radio ng-model="prof.product.cat" ng-value="'Home-making'" name="catList">Homemaking</ion-radio>
+           <ion-radio ng-model="prof.product.cat"  ng-value="'Tech'" name="catList">Technology</ion-radio>
+           <ion-radio ng-model="prof.product.cat"  ng-value="'Education'" name="catList">Education</ion-radio>
+           <ion-radio ng-model="prof.product.cat"  ng-value="'Science'" name="catList">Science</ion-radio>
+         </ion-list>
+         </ion-list>
+    <h3>Status of products:</h3>
+    <ion-list>
+      <ion-radio ng-model="prof.product.stat"  ng-value="'Initial'" name="statList">Ideation Stage</ion-radio>
+      <ion-radio ng-model="prof.product.stat"  ng-value="'Need-funds'" name="statList">Needing funds</ion-radio>
+      <ion-radio ng-model="prof.product.stat"  ng-value="'Complete-Product'" name="statList">Looking for buyers</ion-radio>
+    </ion-list>
+</div>
+    <div class="lst">
+      <label class="item item-input">
+        <span class="input-label" >Description</span>
+        <input type="text" ng-model="prof.product.desc">
+      </label>
+    </div>
+
+  <div class="btna">
+    <button class="button button-block button-assertive" ng-click="prof.saveProduct(prof.product)">Submit</button>
+  </div>
+
+         </ion-content>
+</ion-modal-view>

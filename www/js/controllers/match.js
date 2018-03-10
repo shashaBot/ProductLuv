@@ -7,14 +7,14 @@ app.controller('MatchCtrl', function(Match, Like, Auth, uid, Messages, profile, 
   var viewScroll = $ionicScrollDelegate.$getByHandle('userMessageScroll');
   function init(){
 
-    matc.list = [];
+    matc.likesList = [];
 
-   Match.allMatchesByUser(uid).$loaded().then(function(data){
+   Like.allLikesByUser(uid).$loaded().then(function(data){
      for(var i = 0; i < data.length; i++){
        var item = data[i];
 
-       Auth.getProfile(item.$id).$loaded().then(function(profile) {
-         matc.list.push(profile);
+       Auth.getProduct(item.$id).$loaded().then(function(product) {
+         matc.likesList.push(product);
        });
      }
    });
@@ -26,7 +26,7 @@ app.controller('MatchCtrl', function(Match, Like, Auth, uid, Messages, profile, 
 
  matc.unmatch = function(matchUid){
    Like.removeLike(uid, matchUid);
-   Match.removeMatch(uid, matchUid);
+  //  Match.removeMatch(uid, matchUid);
    init();
  };
 

@@ -13,10 +13,15 @@ app.factory('Auth', function($firebaseAuth, $firebaseObject, $firebaseArray, $st
         getProfile: function(uid) {
             return $firebaseObject(ref.child('profiles').child(uid));
         },
-
+        getProduct: function(productId) {
+          return $firebaseObject(ref.child('products').child(productId));
+        },
+        addProduct: function(product){
+          var newProductKey = ref.child('products').push().key;
+          return ref.child('products').child(newProductKey).set(product);
+        },
         login: function() {
-            var provider = new firebase.auth.FacebookAuthProvider();
-            provider.addScope('public_profile, email, user_location, user_birthday, user_photos, user_about_me');
+            var provider = new firebase.auth.GoogleAuthProvider();
 
             return auth.$signInWithPopup(provider)
                 .then(function(result) {
@@ -25,51 +30,39 @@ app.factory('Auth', function($firebaseAuth, $firebaseObject, $firebaseArray, $st
                     console.log(user);
                     user.then(function(profile) {
                         if (profile.name == undefined) {
-
-                            var genderPromise = $http.get('https://graph.facebook.com/me?fields=gender&access_token=' + accessToken);
-                            var birthdayPromise = $http.get('https://graph.facebook.com/me?fields=birthday&access_token=' + accessToken);
-                            var locationPromise = $http.get('https://graph.facebook.com/me?fields=location&access_token=' + accessToken);
-                            var bioPromise = $http.get('https://graph.facebook.com/me?fields=about&access_token=' + accessToken);
-                            var imagesPromise = $http.get('https://graph.facebook.com/me/photos/uploaded?fields=source&access_token=' + accessToken);
-                            var promises = [genderPromise, birthdayPromise, locationPromise, bioPromise, imagesPromise];
-
-                            $q.all(promises).then(function(data) {
-                                var info = result.user.providerData[0];
-                                var profile = {
-                                    name: info.displayName,
-                                    email: info.email,
-                                    avatar: info.photoURL,
-                                    gender: data[0].data.gender ? data[0].data.gender : "",
-                                    birthday: data[1].data.birthday ? data[1].data.birthday : "",
-                                    age: data[1].data.birthday ? Auth.getAge(data[1].data.birthday) : "",
-                                    location: data[2].data.location ?  data[2].data.location.name : "",
-                                    bio: data[3].data.about ? data[3].data.about : "",
-                                    images: data[4].data.data
-                                }
-                                Auth.createProfile(result.user.uid, profile);
-                            });
+                            var info = result.user.providerData[0];
+                            var profile = {
+                                name: info.displayName,
+                                email: info.email,
+                                avatar: info.photoURL,
+                            }
+                            Auth.createProfile(result.user.uid, profile);
                         }
                     });
                 });
         },
 
         logout: function() {
-            ref.child('profiles').child(auth.$getAuth().uid).update({isOnline: false});
+            ref.child('products').child(auth.$getAuth().uid).update({isOnline: false});
             return auth.$signOut();
-        },
-
-        getAge: function(birthday) {
-            return new Date().getFullYear() - new Date(birthday).getFullYear();
         },
 
         requireAuth: function() {
             return auth.$requireSignIn();
         },
-        getProfiles: function(){
-          return $firebaseArray(ref.child('profiles'));
+        getProducts: function(){
+          return $firebaseArray(ref.child('products'));
         },
-        getProfilesByAge: function(age){
-          return $firebaseArray(ref.child('profiles').orderByChild('age').startAt(18).endAt(age));
+        getProductsByUser: function(userId) {
+          return $firebaseArray(ref.child('products').orderByChild('creatorId').equalTo(userId));
+        },
+        getProductsByCat: function(category){
+          if(category){
+            return $firebaseArray(ref.child('products').orderByChild('productCat').equalTo(category));
+          }
+          else{
+            return $firebaseArray(ref.child('products'));
+          }
         },
         setOnline: function(uid){
           var connected = $firebaseObject(ref.child(".info/connected"));

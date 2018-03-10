@@ -32,14 +32,15 @@
   background-size: cover;
 }
 
-.facebook{
+.google{
   max-width: 200px;
   margin: 0 auto;
 }
 
-.facebook-button{
+.google-button{
   position: absolute;
   top: 500px;
+  background-color: #ea4335;
 }
 
 .big{

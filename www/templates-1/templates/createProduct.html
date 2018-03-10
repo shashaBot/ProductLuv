@@ -1,0 +1,21 @@
+<ion-modal-view>
+  <ion-header-bar>
+    <h1 class="title">Create Product</h1>
+    <div class="buttons">
+      <button class="button button-clear button-dark" ng-click="home.closedescModal()">
+        Close
+      </button>
+    </div>
+    <ion-header-bar>
+      <label class="item item-input">
+  <span class="input-label">Name</span>
+  <input type="text">
+</label>
+<ion-list>
+
+  <ion-checkbox ng-model="filter.red">Red</ion-checkbox>
+  <ion-checkbox ng-model="filter.yellow">Yellow</ion-checkbox>
+  <ion-checkbox ng-model="filter.pink">Pink</ion-checkbox>
+
+</ion-list>
+</ion-modal-view>

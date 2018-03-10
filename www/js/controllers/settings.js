@@ -3,22 +3,28 @@
 app.controller('SettingCtrl', function(Auth, $ionicPopup){
   var sett = this;
 
-  sett.maxAge = window.localStorage.getItem('maxAge') || 25;
-  sett.men = JSON.parse(window.localStorage.getItem('men'));
-  sett.men = sett.men == null ? 25: sett.men;
-  sett.women = JSON.parse(window.localStorage.getItem('women'));
-  sett.women = sett.women == null ? 25: sett.women;
+  sett.stat = JSON.parse(window.localStorage.getItem('stat'));
+  sett.stat = sett.stat == null ? "": sett.stat;
+  sett.cat = JSON.parse(window.localStorage.getItem('cat'));
+  sett.cat = sett.cat == null ? "": sett.cat;
 
-  sett.changeMaxAge = function(){
-    window.localStorage.setItem('maxAge', sett.maxAge);
+
+  sett.setStat = function(){
+    if(sett.stat && sett.stat!=="blah"){
+      window.localStorage.setItem('stat', JSON.stringify(sett.stat));
+    }
+    else {
+      window.localStorage.setItem('stat',JSON.stringify("blah"));
+    }
   };
 
-  sett.selectMen = function(){
-    window.localStorage.setItem('men', sett.men);
-  };
-
-  sett.selectWomen = function(){
-    window.localStorage.setItem('women', sett.women);
+  sett.setCat = function(){
+    if(sett.cat && sett.cat!=="blah"){
+      window.localStorage.setItem('cat', JSON.stringify(sett.cat));
+    }
+    else {
+      window.localStorage.setItem('cat', JSON.stringify("blah"));
+    }
   };
 
   sett.logout = function(){

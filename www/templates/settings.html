@@ -1,20 +1,20 @@
 <ion-view view-title="Settings">
   <ion-content>
     <div class="list padding">
-      <div class="item item-divider">Show age (18 - {{sett.maxAge}})</div>
-      <div class="item range range-positive">
-        18<input type="range" name="age" min="18" max="60" value="25"
-        ng-model="sett.maxAge" on-release="sett.changeMaxAge()">60
-      </div>
-      <div class="item item-divider">Show me</div>
-      <ion-toggle toggle-class="toggle-balanced"
-      ng-model="sett.men"
-      ng-checked="{{sett.men}}"
-      ng-change="sett.selectMen()">Men</ion-toggle>
-      <ion-toggle toggle-class="toggle-balanced"
-      ng-model="sett.women"
-      ng-checked="{{sett.women}}"
-      ng-change="sett.selectWomen()">Women</ion-toggle>
+      <h2>Show me Products</h2>
+      <h3>Preferred Category</h3>
+      <ion-list>
+        <ion-radio ng-model="sett.cat" ng-change="sett.setCat()" ng-value="'Home-making'" name="catList">Homemaking</ion-radio>
+        <ion-radio ng-model="sett.cat" ng-change="sett.setCat()" ng-value="'Tech'" name="catList">Technology</ion-radio>
+        <ion-radio ng-model="sett.cat" ng-change="sett.setCat()" ng-value="'Education'" name="catList">Education</ion-radio>
+        <ion-radio ng-model="sett.cat" ng-change="sett.setCat()" ng-value="'Science'" name="catList">Science</ion-radio>
+      </ion-list>
+      <h3>Status of products:</h3>
+      <ion-list>
+        <ion-radio ng-model="sett.stat" ng-change="sett.setStat()" ng-value="'Initial'" name="statList">Ideation Stage</ion-radio>
+        <ion-radio ng-model="sett.stat" ng-change="sett.setStat()" ng-value="'Need-funds'" name="statList">Needing funds</ion-radio>
+        <ion-radio ng-model="sett.stat" ng-change="sett.setStat()" ng-value="'Complete-Product'" name="statList">Looking for buyers</ion-radio>
+      </ion-list>
       <button class="button button-block button-assertive" ng-click="sett.logout()">Logout</button>
     </div>
   </ion-content>

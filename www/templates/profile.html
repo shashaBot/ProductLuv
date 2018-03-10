@@ -7,14 +7,16 @@
       <div class="card">
         <div class="item item-avatar">
           <img ng-src="{{prof.currentUser.avatar}}">
-          <h2>{{prof.currentUser.name}}, {{prof.currentUser.age}}</h2>
-          <p>
-            {{prof.currentUser.location}}
-          </p>
+          <h2>{{prof.currentUser.name}}</h2>
         </div>
         <div class="item item-divider">
-          <h2>About</h2>
-          <ion-item class="item-text-wrap">{{prof.currentUser.bio}}</ion-item>
+          <span>
+            <h2 class="pull-left">Products</h2>
+          </span>
+          <span class="pull-right">
+            <button class="button button-small button-assertive" ng-click="prof.openCreateProdModal();">Add</button>
+          </span>
+          <ion-item class="item-text-wrap" ng-repeat="product in prof.products" ng-click="prof.showProductDetails(product.$id)">{{product.productName}}</ion-item>
         </div>
       </div>
     </div>

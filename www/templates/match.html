@@ -1,14 +1,12 @@
-<ion-view view-title="Matches">
+<ion-view view-title="Favourites">
   <ion-content>
     <ion-list can-swipe="true">
-      <ion-item class="item item-avatar" ng-repeat="item in matc.list" ng-click="matc.openMessageModal(item.$id)">
-        <img ng-src="{{item.avatar}}">
+      <ion-item class="item" ng-repeat="item in matc.likesList" ng-click="matc.openMessageModal(item.creatorId)">
         <h2>
             <span class="presence" ng-class="{online: item.isOnline }"></span>
-            {{item.name}}, {{item.age}}
+            {{item.productName}}
         </h2>
-        <p>{{item.email}}</p>
-        <p><i class="ion-location"></i> {{item.location}}</p>
+        <p>{{item.creatorId}}</p>
 
         <ion-option-button class="button-assertive" ng-click="matc.unmatch(item.$id)">Unmatch</ion-option-button>
       </ion-item>
